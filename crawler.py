@@ -18,8 +18,8 @@ class ReviewSpider(scrapy.Spider):
     def parse(self, response):
         with open("output.txt", 'a') as f:
             for sel in response.xpath('//div[@class="user_review"]'):
-                review = sel.xpath('text()').extract()
-                f.write(str(review)+"\n")
+                review = str(sel.xpath('text()').extract())
+                f.write(review[10:len(review)-2] + "\n")
                 self.max_reviews = self.max_reviews - 1
                 
                 if (self.max_reviews <= 0):
@@ -27,6 +27,9 @@ class ReviewSpider(scrapy.Spider):
    
    
         self.crawler.stop()
+
+        
+        
         
 def get_reviews(urls):
     for url in urls:
@@ -36,7 +39,7 @@ def get_reviews(urls):
     process.start()
 
 urls = ["https://www.rottentomatoes.com/m/finding_dory/reviews/?page=%u&type=user&sort="]
-getReviews(urls)
+get_reviews(urls)
 
 
 
