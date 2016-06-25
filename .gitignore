@@ -1,0 +1,6 @@
+#Output file
+output.txt
+
+# Eclipse pydev
+.project
+.pydevproject
