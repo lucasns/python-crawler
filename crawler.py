@@ -4,7 +4,7 @@ from scrapy.crawler import CrawlerProcess
 
 class ReviewSpider(scrapy.Spider):
     
-    def __init__(self, url, user_review = True):
+    def __init__(self, url, user_review = True, output_file = "output.txt"):
         self.name = "rotten crawler"
         self.allowed_domains = ["rottentomatoes.com"]
                
@@ -12,6 +12,7 @@ class ReviewSpider(scrapy.Spider):
         self.max_reviews = 100
         self.url = url + "/reviews/?page=%u"
         self.user_review = user_review
+        self.output_file = output_file
            
         if (self.user_review):
             self.url = self.url + "&type=user"
@@ -27,7 +28,7 @@ class ReviewSpider(scrapy.Spider):
             skip = 4
             element = '//div[@class="the_review"]'
         
-        with open("output.txt", 'a') as f:
+        with open(self.output_file, 'a') as f:
             for sel in response.xpath(element):
                 review = str(sel.xpath('text()').extract())
                 
@@ -45,7 +46,7 @@ class ReviewSpider(scrapy.Spider):
 def get_reviews(urls):
     for url in urls:
         process = CrawlerProcess()
-        process.crawl(ReviewSpider, url, False)
+        process.crawl(ReviewSpider, url, False, url[33:]+".txt")
 
     process.start()
 
