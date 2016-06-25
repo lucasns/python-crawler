@@ -10,6 +10,7 @@ class ReviewSpider(scrapy.Spider):
                
         self.max_pages = 6
         self.max_reviews = 100
+        self.max_ratings = 100
         self.url = url + "/reviews/?page=%u"
         self.user_review = user_review
         self.output_file = output_file
@@ -46,21 +47,30 @@ class ReviewSpider(scrapy.Spider):
         #Rating
         if (self.user_review == False):    
             for sel in response.xpath('//div[@class="col-xs-16 review_container"]'):
-                string = str(sel.xpath("div[contains(@class, 'review_icon')]").extract())
-                string = string[15: len(string) - 10]
-                if (string == "review_icon icon small fresh"):
-                    ratings.append("fresh")
-                elif (string == "review_icon icon small rotten"):
-                    ratings.append("rotten")
+                if (self.max_ratings > 0):
+                    string = str(sel.xpath("div[contains(@class, 'review_icon')]").extract())
+                    string = string[15: len(string) - 10]
+                    if (string == "review_icon icon small fresh"):
+                        ratings.append("fresh")
+                    elif (string == "review_icon icon small rotten"):
+                        ratings.append("rotten")
+                    self.max_ratings -= 1;
+                else:
+                    break
+                
                 
         else:
             for sel in response.xpath('//div[@class="col-xs-16"]/span[@class="fl"]'):
-                rating = 0
-                if ("xbd" in str(sel.xpath('text()').extract())):
-                    rating += 0.5
-                for s in sel.xpath('span[@class="glyphicon glyphicon-star"]'):
-                    rating += 1
-                ratings.append(rating)
+                if (self.max_ratings > 0):
+                    rating = 0
+                    if ("xbd" in str(sel.xpath('text()').extract())):
+                        rating += 0.5
+                    for s in sel.xpath('span[@class="glyphicon glyphicon-star"]'):
+                        rating += 1
+                    ratings.append(rating)
+                    self.max_ratings -= 1;
+                else:
+                    break
        
                     
         with open(self.output_file + "_reviews.txt", 'a') as f:                
@@ -70,10 +80,9 @@ class ReviewSpider(scrapy.Spider):
         with open(self.output_file + "_ratings.txt", 'a') as f:                
             for i in range(len(ratings)):
                 f.write(str(ratings[i]) + "\n")
-                
-                    
+                      
         self.crawler.stop()
-        
+      
         
 def get_reviews(urls):
     for url in urls:
