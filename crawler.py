@@ -28,13 +28,15 @@ class ReviewSpider(scrapy.Spider):
    
         self.crawler.stop()
         
+def get_reviews(urls):
+    for url in urls:
+        process = CrawlerProcess()
+        process.crawl(ReviewSpider, url)
+
+    process.start()
 
 urls = ["https://www.rottentomatoes.com/m/finding_dory/reviews/?page=%u&type=user&sort="]
+getReviews(urls)
 
-for url in urls:
-    process = CrawlerProcess()
-    process.crawl(ReviewSpider, url)
-
-process.start()
 
 
