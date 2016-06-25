@@ -65,11 +65,11 @@ class ReviewSpider(scrapy.Spider):
                     
         with open(self.output_file + "_reviews.txt", 'a') as f:                
             for i in range(len(reviews)):
-                f.write(reviews[i] + "\n")
+                f.write(str(reviews[i]) + "\n")
         
         with open(self.output_file + "_ratings.txt", 'a') as f:                
             for i in range(len(ratings)):
-                f.write(ratings[i] + "\n")
+                f.write(str(ratings[i]) + "\n")
                 
                     
         self.crawler.stop()
