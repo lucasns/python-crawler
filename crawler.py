@@ -84,7 +84,14 @@ class ReviewSpider(scrapy.Spider):
         self.crawler.stop()
       
         
-def get_reviews(urls):
+def get_reviews_users(urls):
+    for url in urls:
+        process = CrawlerProcess()
+        process.crawl(ReviewSpider, url, True, url[33:])
+
+    process.start()
+    
+def get_reviews_critics(urls):
     for url in urls:
         process = CrawlerProcess()
         process.crawl(ReviewSpider, url, False, url[33:])
@@ -95,7 +102,8 @@ def get_reviews(urls):
 #Tests
 #urls = ["https://www.rottentomatoes.com/m/finding_dory", "https://www.rottentomatoes.com/m/captain_america_civil_war"]
 urls = ["https://www.rottentomatoes.com/m/captain_america_civil_war"]
-get_reviews(urls)
+urls = ["https://www.rottentomatoes.com/m/now_you_see_me_2"]
+get_reviews_users(urls)
 
 
 
