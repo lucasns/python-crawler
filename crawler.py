@@ -8,7 +8,7 @@ class ReviewSpider(scrapy.Spider):
         self.name = "rotten crawler"
         self.allowed_domains = ["rottentomatoes.com"]
                
-        self.max_pages = 6
+        self.max_pages = 1
         self.max_reviews = 100
         self.max_ratings = 100
         self.url = url + "/reviews/?page=%u"
@@ -60,13 +60,15 @@ class ReviewSpider(scrapy.Spider):
                 
                 
         else:
-            for sel in response.xpath('//div[@class="col-xs-16"]/span[@class="fl"]'):
+            for sel in response.xpath('//div[@class="col-xs-16"]'):
+                #/span[@class="fl"]
                 if (self.max_ratings > 0):
                     rating = 0
-                    if ("xbd" in str(sel.xpath('text()').extract())):
-                        rating += 0.5
-                    for s in sel.xpath('span[@class="glyphicon glyphicon-star"]'):
-                        rating += 1
+                    for span in sel.xpath('span[@class="fl"]'):
+                        if ("xbd" in str(span.xpath('text()').extract())):
+                            rating += 0.5
+                        for s in span.xpath('span[@class="glyphicon glyphicon-star"]'):
+                            rating += 1
                     ratings.append(rating)
                     self.max_ratings -= 1;
                 else:
